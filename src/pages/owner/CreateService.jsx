@@ -23,32 +23,31 @@ export default function CreateService() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  try {
     setLoading(true);
     setMessage("");
     setError("");
 
-    try {
-      const res = await axiosInstance.post("/admin/service/create", {
-        salonId,
-        name: formData.name,
-        price: formData.price,
-        durationMinutes: formData.durationMinutes,
-      });
+    await axiosInstance.post("/admin/service/create", {
+      salonId,
+      name: formData.name,
+      price: formData.price,
+      durationMinutes: formData.durationMinutes,
+    });
 
-      setMessage(res.data.message || "Service created successfully");
+    setMessage("Service created successfully. Redirecting...");
 
-      setTimeout(() => {
-        navigate("/owner/dashboard");
-      }, 1500);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to create service");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setTimeout(() => {
+      navigate("/owner/dashboard");
+    }, 1500);
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to create service");
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-100 px-6 py-8">
@@ -98,17 +97,17 @@ export default function CreateService() {
           <p className="mb-4 text-red-600 font-medium">{error}</p>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-3 rounded-lg ${
-            loading
-              ? "bg-slate-400 text-white cursor-not-allowed"
-              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-700"
-          }`}
-        >
-          {loading ? "Creating..." : "Create Service"}
-        </button>
+         <button
+  type="submit"
+  disabled={loading}
+  className={`w-full py-3 rounded-lg ${
+    loading
+      ? "bg-slate-400 text-white cursor-not-allowed"
+      : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-700"
+  }`}
+>
+  {loading ? "Creating Service..." : "Create Service"}
+</button>
       </form>
     </div>
   );

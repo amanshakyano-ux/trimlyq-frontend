@@ -47,40 +47,39 @@ useEffect(() => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  try {
     setLoading(true);
     setMessage("");
     setError("");
 
-    try {
-      const data = new FormData();
+    const data = new FormData();
 
-      data.append("name", formData.name);
-      data.append("address", formData.address);
-      data.append("city", formData.city);
-      data.append("area", formData.area);
-      data.append("openingTime", formData.openingTime);
-      data.append("closingTime", formData.closingTime);
+    data.append("name", formData.name);
+    data.append("address", formData.address);
+    data.append("city", formData.city);
+    data.append("area", formData.area);
+    data.append("openingTime", formData.openingTime);
+    data.append("closingTime", formData.closingTime);
 
-      if (salonImage) {
-        data.append("salonImage", salonImage);
-      }
-
-      const res = await axiosInstance.patch(`/admin/salon/${salonId}`, data);
-
-      setMessage(res.data.message || "Salon updated successfully");
-
-      setTimeout(() => {
-        navigate("/owner/dashboard");
-      }, 1500);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to update salon");
-    } finally {
-      setLoading(false);
+    if (salonImage) {
+      data.append("salonImage", salonImage);
     }
-  };
+
+    const res = await axiosInstance.patch(`/admin/salon/${salonId}`, data);
+
+    setMessage(res.data.message || "Salon updated successfully. Redirecting...");
+
+    setTimeout(() => {
+      navigate("/owner/dashboard");
+    }, 1500);
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to update salon");
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-100 px-6 py-8">
@@ -164,16 +163,16 @@ useEffect(() => {
         {error && <p className="mb-4 text-red-600 font-medium">{error}</p>}
 
         <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-3 rounded-lg ${
-            loading
-              ? "bg-slate-400 text-white cursor-not-allowed"
-              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-700"
-          }`}
-        >
-          {loading ? "Updating..." : "Update Salon"}
-        </button>
+  type="submit"
+  disabled={loading}
+  className={`w-full py-3 rounded-lg ${
+    loading
+      ? "bg-slate-400 text-white cursor-not-allowed"
+      : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-700"
+  }`}
+>
+  {loading ? "Updating Salon..." : "Update Salon"}
+</button>
       </form>
     </div>
   );
