@@ -6,18 +6,26 @@ export default function Home() {
   const [salons, setSalons] = useState([]);
   const [query, setQuery] = useState("");
 
-  const fetchSalons = async (searchQuery = "") => {
-    try {
-      const res = await axiosInstance.get(`/salon/search?query=${searchQuery}`);
-      setSalons(res.data.salons);
-    } catch (err) {
-      console.log("Salon API Error:", err.response?.data || err.message);
-    }
-  };
+ const fetchSalons = async (searchQuery = "") => {
+  try {
+    const cleanQuery = searchQuery.trim();
 
-  useEffect(() => {
-    fetchSalons();
-  }, []);
+    const res = await axiosInstance.get(
+      `/salon/search?query=${encodeURIComponent(cleanQuery)}`
+    );
+
+    setSalons(res.data.salons || []);
+  } catch (err) {
+    console.log("Salon API Error:", err.response?.data || err.message);
+  }
+};
+useEffect(() => {
+  const timer = setTimeout(() => {
+    fetchSalons(query);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [query]);
 
   return (
     <div className="min-h-screen bg-slate-100 px-6 py-8">
