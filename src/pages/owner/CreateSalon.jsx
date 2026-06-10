@@ -15,6 +15,7 @@ const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 const [message, setMessage] = useState("");
 const [error, setError] = useState("");
+ 
 
   const handleChange = (e) => {
     setFormData({
@@ -26,11 +27,11 @@ const [error, setError] = useState("");
  const handleSubmit = async (e) => {
   e.preventDefault();
 
-  setLoading(true);
-  setError("");
-  setMessage("");
-
   try {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
     const data = new FormData();
 
     data.append("name", formData.name);
@@ -41,21 +42,15 @@ const [error, setError] = useState("");
     data.append("closingTime", formData.closingTime);
     data.append("salonImage", salonImage);
 
-    const res = await axiosInstance.post(
-      "/admin/salon/create",
-      data
-    );
+    await axiosInstance.post("/admin/salon/create", data);
 
-    setMessage("Salon created successfully");
+    setMessage("Salon created successfully. Redirecting...");
+
     setTimeout(() => {
-  navigate("/owner/dashboard");
-}, 1500);
-
+      navigate("/owner/dashboard");
+    }, 1500);
   } catch (err) {
-    setError(
-      err.response?.data?.message || "Failed to create salon"
-    );
-  } finally {
+    setError(err.response?.data?.message || "Failed to create salon");
     setLoading(false);
   }
 };
@@ -148,9 +143,9 @@ const [error, setError] = useState("");
       : "bg-emerald-600 text-white hover:bg-emerald-700"
   }`}
 >
-  {loading ? "Creating..." : "Create Salon"}
+  {loading ? "Creating Salon..." : "Create Salon"}
 </button>
     </form>
   </div>
-)
+  )
 };

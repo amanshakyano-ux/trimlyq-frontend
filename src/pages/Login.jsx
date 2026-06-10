@@ -10,11 +10,13 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
 const handleLogin = async (e) => {
   e.preventDefault();
 
   try {
+    setLoading(true);
     setError("");
 
     const res = await axiosInstance.post("/user/login", {
@@ -22,15 +24,20 @@ const handleLogin = async (e) => {
       password,
     });
 
-     localStorage.setItem("token", res.data.token);
+    localStorage.setItem("token", res.data.token);
+
     if (res.data.user) {
-  localStorage.setItem("user", JSON.stringify(res.data.user));
-}
-     window.location.href = "/";
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+    }
+    
+
+    window.location.href = "/"
   } catch (err) {
     setError(
       err.response?.data?.message || "Login failed. Please try again."
     );
+
+    setLoading(false);
   }
 };
 
@@ -65,12 +72,17 @@ const handleLogin = async (e) => {
     </p>
   )
 }
-        <button
-          type="submit"
-          className="mt-6 w-full bg-emerald-600 text-white py-3 rounded-lg cursor-pointer hover:bg-emerald-700"
-        >
-          Login
-        </button>
+       <button
+  type="submit"
+  disabled={loading}
+  className={`mt-6 w-full py-3 rounded-lg text-white ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
+  }`}
+>
+  {loading ? "Logging in..." : "Login"}
+</button>
         <div className="mt-4 text-right">
   <button
     type="button"

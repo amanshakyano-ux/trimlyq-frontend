@@ -14,6 +14,7 @@ export default function Signup() {
 
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,24 +23,27 @@ export default function Signup() {
     });
   };
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+   const handleSignup = async (e) => {
+  e.preventDefault();
 
-    try {
-      setError("");
-      setMessage("");
+  try {
+    setLoading(true);
+    setError("");
+    setMessage("");
 
-      const res = await axiosInstance.post("/user/signup", formData);
+    const res = await axiosInstance.post("/user/signup", formData);
 
-      setMessage(res.data.message);
+    setMessage(res.data.message || "Signup successful. Redirecting to login...");
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (err) {
-      setError(err.response?.data?.message || "Signup failed");
-    }
-  };
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
+  } catch (err) {
+    setError(err.response?.data?.message || "Signup failed");
+    setLoading(false);
+  }
+};
+  
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
@@ -94,12 +98,17 @@ export default function Signup() {
           <p className="mt-4 text-emerald-600 font-medium">{message}</p>
         )}
 
-        <button
-          type="submit"
-          className="mt-6 w-full bg-emerald-600 text-white py-3 rounded-lg cursor-pointer hover:bg-emerald-700"
-        >
-          Signup
-        </button>
+      <button
+  type="submit"
+  disabled={loading}
+  className={`mt-6 w-full py-3 rounded-lg text-white ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
+  }`}
+>
+  {loading ? "Signing up..." : "Signup"}
+</button>
       </form>
     </div>
   );
